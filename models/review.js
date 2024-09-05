@@ -40,8 +40,8 @@ Reviews.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: 'project',
+    modelName: 'reviews',
   }
 );
 
-module.exports = Project;
+module.exports = Reviews;
