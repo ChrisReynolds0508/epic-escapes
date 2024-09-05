@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { Reviews } = require('../../models');
 const withAuth = require('../../utils/auth');
 
-router.post('/', withAuth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newReview = await Reviews.create({
       ...req.body,
@@ -11,6 +11,7 @@ router.post('/', withAuth, async (req, res) => {
 
     res.status(200).json(newReview);
   } catch (err) {
+    console.log(err.message);
     res.status(400).json(err);
   }
 });
