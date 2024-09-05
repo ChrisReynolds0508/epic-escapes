@@ -2,7 +2,21 @@
   {
     "city_name": "London",
     "review": "I loved London! The city is so vibrant and full of life. I especially enjoyed the museums and the food. I can't wait to go back!"
-    
+  },
+  {
+    "city_name": "Dubai",
+    "review": "Dubai was amazing! The architecture is stunning and the shopping is incredible. I had a great time exploring the city and trying new foods."
+  },
+  {
+    "city_name": "Singapore",
+    "review": "Singapore was beautiful! The gardens are stunning and the food is delicious. I had a great time exploring the city and trying new things."
+  },
+  {
+    "city_name": "New York",
+    "review": "New York is the city that never sleeps! I loved the energy and the diversity of the city. The food was amazing and the shopping was incredible. I can't wait to go back!"
+  },
+  {
+    "city_name": "Paris",
+    "review": "Paris is great for a romantic getaway! The city is so beautiful and the food is delicious. I had a great time exploring the museums and the architecture. I can't wait to go back!"
   }
- 
 ]
