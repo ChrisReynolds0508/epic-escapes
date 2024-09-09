@@ -5,10 +5,10 @@
     <h2>
       <!-- Call helper function with triple brackets to render the emoji span as HTML -->
       {{{get_emoji}}}
-      <a href="/review/{{review.id}}">{{review.name}}</a>
+      <a href="/reviews/{{review.id}}">{{review.name}}</a>
     </h2>
     
-    <p>Created by {{review.user.name}} on {{format_date review.date_created}}</p>
+    <p>Created by {{review.user_id}} on {{format_date review.date_created}}</p>
   </div>
   <div class="col-md-7">
     <p>
