@@ -1,13 +1,13 @@
 const newFormHandler = async event => {
   event.preventDefault();
 
-  const name = document.querySelector("#review-name").value.trim();
-  const description = document.querySelector("#review-desc").value.trim();
+  const city_name = document.querySelector("#review-name").value.trim();
+  const review = document.querySelector("#review-desc").value.trim();
 
-  if (name && description) {
+  if (city_name && review) {
     const response = await fetch(`/api/reviews`, {
       method: "POST",
-      body: JSON.stringify({ name, description }),
+      body: JSON.stringify({ city_name, review }),
       headers: {
         "Content-Type": "application/json"
       }
@@ -15,6 +15,7 @@ const newFormHandler = async event => {
 
     if (response.ok) {
       document.location.replace("/profile");
+      console.log(response.body);
     } else {
       alert("Failed to create project");
     }
@@ -32,15 +33,15 @@ const delButtonHandler = async event => {
     if (response.ok) {
       document.location.replace("/profile");
     } else {
-      alert("Failed to delete project");
+      alert("Failed to delete review");
     }
   }
 };
 
 document
-  .querySelector(".new-project-form")
+  .querySelector(".new-review-form")
   .addEventListener("submit", newFormHandler);
 
 document
-  .querySelector(".project-list")
+  .querySelector(".review-list")
   .addEventListener("click", delButtonHandler);
