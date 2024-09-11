@@ -14,8 +14,6 @@ router.get("/", async (req, res) => {
       ]
     });
 
-    //join the table
-
     // Serialize data so the template can read it
     const reviews = reviewData.map(review => review.get({ plain: true }));
 
@@ -65,6 +63,30 @@ router.get("/profile", withAuth, async (req, res) => {
 
     res.render("profile", {
       ...user,
+      logged_in: true
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json(err);
+  }
+});
+
+// add auth to /comment
+router.get("/comment/:id", withAuth, async (req, res) => {
+  try {
+    const commentData = await Comment.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          attributes: ["name"]
+        }
+      ]
+    });
+    // Find the logged in user based on the session ID
+    const comment = commentData.get({ plain: true });
+
+    res.render("comment", {
+      ...comment,
       logged_in: true
     });
   } catch (err) {
