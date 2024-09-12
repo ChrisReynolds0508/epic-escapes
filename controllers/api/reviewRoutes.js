@@ -1,10 +1,12 @@
 const router = require('express').Router();
-const { Reviews } = require('../../models');
+const { Reviews, Comments } = require('../../models');
 const withAuth = require('../../utils/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const reviewData = await Reviews.findAll();
+    const reviewData = await Reviews.findAll({
+      include: [{ model: Comments }],
+    });
 
     res.status(200).json(reviewData);
   } catch (err) {
@@ -35,6 +37,10 @@ router.post('/', async (req, res) => {
       ...req.body,
       user_id: req.session.user_id,
     });
+    const newComment = await Comments.create({
+      ...req.body,
+      user_id: req.session.user_id
+    })
 
     res.status(200).json(newReview);
   } catch (err) {
