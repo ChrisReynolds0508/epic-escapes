@@ -1,26 +1,44 @@
 <!-- Loop over each object in the projects array -->
 {{#each reviews as |review|}}
-  <div class="row mb-4 project">
-    <div class="col-md-5">
-      <h2>
-        <!-- Call helper function with triple brackets to render the emoji span as HTML -->
-        {{{get_emoji}}}
-        <a href="/reviews/{{review.id}}">{{review.name}}</a>
-      </h2>
+<div class="row mb-4 project">
+  <div class="col-md-5">
+    <h2>
+      <!-- Call helper function with triple brackets to render the emoji span as HTML -->
+      {{{get_emoji}}}
+      <a href="/reviews/{{review.id}}">{{review.name}}</a>
+    </h2>
 
-      <p>Created by
-        {{review.user.name}}
-        on
-        {{format_date review.date_created}}</p>
-    </div>
-    <div class="col-md-7">
-      <p>
-        <strong>{{review.city_name}}</strong>
-        <hr />
-        {{review.review}}
-        <br>
-        <a disabled href="/comment/{{comment.id}}">Comment</a>
-      </p>
-    </div>
+    <p>Created by
+      {{review.user.name}}
+      on
+      {{format_date review.date_created}}</p>
   </div>
+  <div class="col-md-7">
+    <p>
+      <strong>{{review.city_name}}</strong>
+      <hr />
+      {{review.review}}
+      <br>
+      <br>
+      {{#each review.comments as |comment|}}
+    <p><strong>Comments</strong></p>
+    <span><strong>{{review.user.name}}</strong></span>
+    <span><em>{{format_date review.date_created}}</em></span>
+    <br>
+    <p>{{comment.comment_text}}</p>
+
+    {{/each}}
+
+    <form class="form comment-form">
+      <div class="form-group">
+        <label for="comment-box">Add a Comment</label>
+        <br>
+        <textarea id="comment-box" rows=20 cols=90>Maximum 1000 Characters..</textarea>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" type="submit">Comment</button>
+      </div>
+    </form>
+  </div>
+</div>
 {{/each}}

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Reviews, User } = require("../models");
+const { Reviews, User, Comments } = require("../models");
 const withAuth = require("../utils/auth");
 
 router.get("/", async (req, res) => {
@@ -10,6 +10,9 @@ router.get("/", async (req, res) => {
         {
           model: User,
           attributes: ["name"]
+        },
+        { model: Comments,
+          attributes: ["comment_text"]
         }
       ]
     });
@@ -72,21 +75,9 @@ router.get("/profile", withAuth, async (req, res) => {
 });
 
 // add auth to /comment
-router.get("/comment/:id", withAuth, async (req, res) => {
+router.get("/comment", withAuth, async (req, res) => {
   try {
-    const commentData = await Comment.findByPk(req.params.id, {
-      include: [
-        {
-          model: User,
-          attributes: ["name"]
-        }
-      ]
-    });
-    // Find the logged in user based on the session ID
-    const comment = commentData.get({ plain: true });
-
     res.render("comment", {
-      ...comment,
       logged_in: true
     });
   } catch (err) {
@@ -98,7 +89,7 @@ router.get("/comment/:id", withAuth, async (req, res) => {
 router.get("/login", (req, res) => {
   // If the user is already logged in, redirect the request to another route
   if (req.session.logged_in) {
-    res.redirect("/profile");
+    res.redirect("/");
     return;
   }
   res.render("login");
