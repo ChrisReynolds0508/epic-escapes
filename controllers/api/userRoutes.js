@@ -34,15 +34,17 @@ router.post('/login', async (req, res) => {
       return;
     }
 
+    // Save the session after setting user data
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
-      res.status(200).json({ user: userData, message: 'You are now logged in!' });
-    });
+      req.session.username = userData.name;  // Save the username in session
 
+      console.log('Session Username after login:', req.session.username);  // Debugging log
+      res.json({ user: userData, message: 'You are now logged in!' });
+    });
   } catch (err) {
-    console.log(err.message);  // Log the error for debugging
-    res.status(500).json({ message: "Failed to log in. Please try again." });
+    res.status(400).json(err);
   }
 });
 
