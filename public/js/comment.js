@@ -1,31 +1,50 @@
-const loginFormHandler = async event => {
-  event.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+  const newCommentHandler = async event => {
+    event.preventDefault();
 
-  // Collect values from the login form
-  const comment = document.querySelector("#comment-box").value.trim();
+    const reviewId = event.target.getAttribute("data-id");
+    const commentText = document.querySelector(`#comment-box-${reviewId}`).value.trim();
 
+    if (commentText) {
+      const response = await fetch(`/review/${reviewId}/comments`, {
+        method: "POST",
+        body: JSON.stringify({ comment_text: commentText }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  if (comment) {
-    if (comment.length > 1000) {
-      alert("Password must be at most 1000 characters long");
-      return;
+      // Check if the response is JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        const newComment = await response.json();  // Only parse JSON if it's actually JSON
+
+        // Remove "No comments yet" message if it exists
+        const noCommentsMessage = document.querySelector(`#no-comments-${reviewId}`);
+        if (noCommentsMessage) {
+          noCommentsMessage.remove();
+        }
+
+        // Append the new comment to the comment list
+        const commentList = document.querySelector(`.comment-list[data-id="${reviewId}"]`);
+        const commentItem = document.createElement("div");
+        commentItem.classList.add("comment-item");
+        commentItem.innerHTML = `<p>${newComment.comment_text} by You</p>`;
+        commentList.appendChild(commentItem);
+
+        // Clear the comment input field
+        document.querySelector(`#comment-box-${reviewId}`).value = '';
+      } else {
+        // If the response is not JSON, log it to the console to inspect
+        const responseText = await response.text();  // Get the HTML response
+        console.log("Non-JSON response:", responseText);
+        alert("You can't comment without login or sign up.");
+      }
     }
-    // Send a POST request to the API endpoint
-    const response = await fetch("/api/users/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" }
-    });
+  };
 
-    if (response.ok) {
-      // If successful, redirect the browser to the homepage
-      document.location.replace("/");
-    } else {
-      alert(response.statusText);
-    }
-  }
-};
-
-document
-  .querySelector(".comment-form")
-  .addEventListener("submit", loginFormHandler);
+  // Attach event listener to all comment forms
+  document.querySelectorAll(".new-comment-form").forEach(form => {
+    form.addEventListener("submit", newCommentHandler);
+  });
+});

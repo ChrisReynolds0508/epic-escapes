@@ -1,61 +1,24 @@
-const loginFormHandler = async event => {
+const loginFormHandler = async (event) => {
   event.preventDefault();
 
-  // Collect values from the login form
-  const email = document.querySelector("#email-login").value.trim();
-  const password = document.querySelector("#password-login").value.trim();
+  // Get the values from the login form
+  const email = document.querySelector('#email-login').value.trim();
+  const password = document.querySelector('#password-login').value.trim();
 
-  if (email) {
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters long");
-      return;
-    }
-    // Send a POST request to the API endpoint
-    const response = await fetch("/api/users/login", {
-      method: "POST",
+  if (email && password) {
+    // Send a POST request to the login route
+    const response = await fetch('/api/user/login', {
+      method: 'POST',
       body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (response.ok) {
-      // If successful, redirect the browser to the homepage
-      document.location.replace("/");
+      document.location.replace('/homepage'); // Redirect after successful login
     } else {
-      alert(response.statusText);
+      alert('Failed to log in. Please check your email and password.');
     }
   }
 };
 
-const signupFormHandler = async event => {
-  event.preventDefault();
-
-  const name = document.querySelector("#name-signup").value.trim();
-  const email = document.querySelector("#email-signup").value.trim();
-  const password = document.querySelector("#password-signup").value.trim();
-
-  if (name && email) {
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters long");
-      return;
-    }
-    const response = await fetch("/api/users", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
-      headers: { "Content-Type": "application/json" }
-    });
-
-    if (response.ok) {
-      document.location.replace("/");
-    } else {
-      alert(response.statusText);
-    }
-  }
-};
-
-document
-  .querySelector(".login-form")
-  .addEventListener("submit", loginFormHandler);
-
-document
-  .querySelector(".signup-form")
-  .addEventListener("submit", signupFormHandler);
+document.querySelector('.login-form').addEventListener('submit', loginFormHandler);

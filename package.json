@@ -4,8 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "init": "npm install",
+    "database": "psql -U postgres -f db/schema.sql",
+    "seed": "node seeds/seed.js",
     "start": "nodemon server.js",
-    "seed": "node seeds/seed.js"
+    "tailwind-init": "npm install tailwindcss; npx tailwindcss init",
+    "tailwind-build": "npx tailwindcss build src/styles.css -o public/css/styles.css --watch"
   },
   "keywords": [],
   "author": "",
