@@ -7,7 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelector(`#comment-box-${reviewId}`)
       .value.trim();
 
-    if (commentText) {
+    // Basic validation for empty comment
+    if (!commentText) {
+      alert("Comment cannot be empty.");
+      return;
+    }
+
+    try {
       const response = await fetch(`/review/${reviewId}/comments`, {
         method: "POST",
         body: JSON.stringify({ comment_text: commentText }),
@@ -16,10 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Check if the response is JSON
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
-        const newComment = await response.json(); // Only parse JSON if it's actually JSON
+        const newComment = await response.json();
 
         // Remove "No comments yet" message if it exists
         const noCommentsMessage = document.querySelector(
@@ -41,14 +46,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear the comment input field
         document.querySelector(`#comment-box-${reviewId}`).value = "";
       } else {
-        // If the response is not JSON, log it to the console to inspect
-        const responseText = await response.text(); // Get the HTML response
+        const responseText = await response.text();
+        console.error("Server response error:", responseText);
         alert("You can't comment without login or sign up.");
       }
+    } catch (error) {
+      console.error("Error while submitting comment:", error);
+      alert("An error occurred. Please try again later.");
     }
   };
 
-  // Attach event listener to all comment forms
   document.querySelectorAll(".new-comment-form").forEach(form => {
     form.addEventListener("submit", newCommentHandler);
   });
