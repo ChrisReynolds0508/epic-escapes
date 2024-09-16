@@ -1,24 +1,27 @@
 # EpicEscapes
-Welcome to **Epic Escapes**, to your ultimate travel planner platform where you can read & write comments and add addtional comments to the each review with your own profile. 
+Welcome to **Epic Escapes**, your ultimate travel blogging platform where you can read, post, and comment on yours and other user's blog posts 
 
-Deployed web application URL: https://travel-planner-r3fr.onrender.com/login
+Deployed web application URL: https://travel-planner-r3fr.onrender.com
 
 ## Description
 
-The TrevaPlanner is the web based application where you can login or register. And in the platform you will see the list of the reviews for desire destination, or you can add a new review or commnet on existing review. 
+Our cutting-edge blog platform empowers travel aficionados to express their impressions on diverse travel spots while also providing the opportunity to interact with and comment on fellow users' posts.
 
-![Home Page](https://travel-planner-r3fr.onrender.com/login)
-![Profile](https://travel-planner-r3fr.onrender.com/profile)
+Experience the versatility of Epic Escapes by immersing yourself in a platform where you can read, publish, and engage in conversations about your preferred travel destinations.
 
-## Hgithub repositery 
+![Home Page](./images/homepage.png)
+![Profile](./images/profile.png)
+
+## Github Repository 
 
 
-[Epic Escapes](https://github.com/ChrisReynolds0508/epic-escapes)
+https://github.com/ChrisReynolds0508/epic-escapes
 
 ## Technologies Utilised
 
 [PostgreSQL](https://www.postgresql.org/)
 [Bootstrap](https://getbootstrap.com/)
+
 
 
 ## Credits
@@ -33,8 +36,9 @@ Ashley Cowan https://github.com/Ashley55mv
 
 ## License
 
+Please refer to the license in repo
 
 ## How to Contribute
 
 We welcome contributions to BeatBrowser! If you have suggestions for new features, improvements, or bug fixes, please open an issue or submit a pull request.
-# travel-planner
+
