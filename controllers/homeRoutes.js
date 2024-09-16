@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { user } = require("pg/lib/defaults");
 const { User, Review, Comment } = require("../models");
 const withAuth = require("../utils/auth");
 
@@ -25,23 +26,26 @@ router.get("/reviews", async (req, res) => {
 // Route to get all reviews and render the homepage
 router.get('/', async (req, res) => {
   try {
+    console.log('Session Username on Homepage:', req.session.username);  // Check if the username is accessible
+
     const reviews = await Review.findAll({
-      include: [
-        { model: User, attributes: ['name'] },  // Fetch associated user for review
-        { model: Comment, include: { model: User, attributes: ['name'] } }  // Fetch associated comments and comment users
-      ],
+      include: [{ model: User, attributes: ['name'] }, { model: Comment, include: User }],
     });
 
-    const plainReviews = reviews.map(review => review.get({ plain: true }));
+    const user = await User.findByPk(req.session.user_id);
 
     res.render('homepage', {
-      reviews: plainReviews,
-      logged_in: req.session.logged_in,  // Pass the logged-in status
+      reviews: reviews.map(review => review.get({ plain: true })),
+      logged_in: req.session.logged_in,
+      username: user ? user.name : null // Pass the username to the template
     });
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
+
+
 
 // Route to post a new comment for a specific review
 router.post('/review/:id/comments', withAuth, async (req, res) => {
@@ -75,16 +79,22 @@ router.get("/review/:id", async (req, res) => {
 router.get('/homepage', async (req, res) => {
   try {
     const reviews = await Review.findAll({
-      include: [{ model: User, attributes: ['name'] }, {model: Comment, include: User}],
+      where: { user_id: req.session.user_id },
+      include: [{ model: User, attributes: ['name'] }, { model: Comment, include: User }],
     });
+
+    const user = await User.findByPk(req.session.user_id);
+
     res.render('homepage', {
       reviews: reviews.map(review => review.get({ plain: true })),
-      logged_in: req.session.logged_in
+      logged_in: req.session.logged_in,
+      username: user ? user.name : null // Pass the username to the template
     });
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
 
 // get login page validation
 router.get("/login", async (req, res) => {
@@ -121,6 +131,7 @@ router.get("/review", withAuth, async (req, res) => {
     res.render("review", {
       reviews: reviews.map(review => review.get({ plain: true })),  // Pass plain objects
       logged_in: req.session.logged_in,
+      username: req.session.username,  // Pass the username to the template
     });
   } catch (err) {
     res.status(500).json(err);
