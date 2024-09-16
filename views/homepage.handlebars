@@ -3,14 +3,18 @@
   <div class="review-list">
     {{#each reviews}}
     <div class="review-item bg-white shadow-md rounded-lg p-6 mb-6" data-id="{{this.id}}">
-      <h3 class="text-xl font-semibold mb-2">{{this.city_name}} by {{this.user.name}}</h3>
+      <h3 class="text-xl font-semibold mb-2">{{this.city_name}} by {{this.user.name}} <span
+          class="text-red-400">{{format_date
+          date_created}}</span></h3>
       <p class="text-gray-700 mb-4">{{this.review}}</p>
 
       <!-- Display comments -->
       <div class="comment-list bg-gray-100 p-4 rounded-lg" data-id="{{this.id}}">
         {{#each this.comments}}
         <div class="comment-item mb-2">
-          <p class="text-gray-600">{{this.comment_text}} <br> <div class="font-semibold text-right"><small>- by {{this.user.name}}</small></div></p>
+          <p class="text-gray-600">{{this.comment_text}} <br>
+          <div class="font-semibold text-right"><small>- by {{this.user.name}}</small></div>
+          </p>
         </div>
         {{else}}
         <p class="text-gray-500" id="no-comments-{{this.id}}">No comments yet.</p>
