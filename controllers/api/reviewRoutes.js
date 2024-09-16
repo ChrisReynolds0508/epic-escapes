@@ -1,57 +1,25 @@
-const router = require('express').Router();
-const { Reviews, Comments } = require('../../models');
-const withAuth = require('../../utils/auth');
+const router = require("express").Router();
+const { Review } = require("../../models");
+const withAuth = require("../../utils/auth");
 
-router.get('/', async (req, res) => {
+// POST route to create a new review (returns JSON)
+router.post("/", withAuth, async (req, res) => {
   try {
-    const reviewData = await Reviews.findAll({
-      include: [{ model: Comments }],
-    });
-
-    res.status(200).json(reviewData);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json(err);
-  }
-}
-);
-
-router.get('/:id', async (req, res) => {
-  try {
-    const reviewData = await Reviews.findByPk(req.params.id);
-
-    if (!reviewData) {
-      res.status(404).json({ message: 'No review found with this id!' });
-      return;
-    }
-
-    res.status(200).json(reviewData);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-}
-);
-router.post('/', async (req, res) => {
-  try {
-    const newReview = await Reviews.create({
-      ...req.body,
+    const newReview = await Review.create({
+      city_name: req.body.city_name,
+      review: req.body.review, 
       user_id: req.session.user_id,
     });
-    const newComment = await Comments.create({
-      ...req.body,
-      user_id: req.session.user_id
-    })
-
-    res.status(200).json(newReview);
+    res.status(200).json(newReview);  // Return JSON data, no redirection
   } catch (err) {
-    console.log(err.message);
     res.status(400).json(err);
-  }
+  } 
 });
 
-router.delete('/:id', withAuth, async (req, res) => {
+// DELETE route to delete a review (returns JSON)
+router.delete("/:id", withAuth, async (req, res) => {
   try {
-    const reviewData = await Reviews.destroy({
+    const reviewData = await Review.destroy({
       where: {
         id: req.params.id,
         user_id: req.session.user_id,
@@ -59,11 +27,11 @@ router.delete('/:id', withAuth, async (req, res) => {
     });
 
     if (!reviewData) {
-      res.status(404).json({ message: 'No review found with this id!' });
+      res.status(404).json({ message: "No review found with this id!" });
       return;
     }
 
-    res.status(200).json(reviewData);
+    res.status(200).json({ message: "Review deleted" });
   } catch (err) {
     res.status(500).json(err);
   }

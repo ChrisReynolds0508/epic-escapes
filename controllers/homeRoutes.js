@@ -1,98 +1,132 @@
 const router = require("express").Router();
-const { Reviews, User, Comments } = require("../models");
+const { User, Review, Comment } = require("../models");
 const withAuth = require("../utils/auth");
 
-router.get("/", async (req, res) => {
+// Route to render the list of reviews (used for dynamic updates)
+router.get("/reviews", async (req, res) => {
   try {
-    // Get all projects and JOIN with user data
-    const reviewData = await Reviews.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ["name"]
-        },
-        { model: Comments,
-          attributes: ["comment_text"]
-        }
-      ]
+    const reviews = await Review.findAll({
+      include: [{ model: User, attributes: ["name"] }, { model: Comment, include: User }],
     });
 
-    // Serialize data so the template can read it
-    const reviews = reviewData.map(review => review.get({ plain: true }));
+    const plainReviews = reviews.map(review => review.get({ plain: true }));
 
-    // Pass serialized data and session flag into template
-    res.render("homepage", {
-      reviews,
-      logged_in: req.session.logged_in
+    // Render a partial template that contains only the review list HTML
+    res.render("partials/review-list", {
+      reviews: plainReviews,
     });
   } catch (err) {
-    console.log(err.message);
     res.status(500).json(err);
   }
 });
 
-router.get("/reviews/:id", async (req, res) => {
+// Existing route to render the homepage
+// Route to get all reviews and render the homepage
+// Route to get all reviews and render the homepage
+router.get('/', async (req, res) => {
   try {
-    const reviewData = await Reviews.findByPk(req.params.id, {
+    const reviews = await Review.findAll({
       include: [
-        {
-          model: User,
-          attributes: ["name"]
-        }
-      ]
+        { model: User, attributes: ['name'] },  // Fetch associated user for review
+        { model: Comment, include: { model: User, attributes: ['name'] } }  // Fetch associated comments and comment users
+      ],
     });
 
-    const review = reviewData.get({ plain: true });
+    const plainReviews = reviews.map(review => review.get({ plain: true }));
+
+    res.render('homepage', {
+      reviews: plainReviews,
+      logged_in: req.session.logged_in,  // Pass the logged-in status
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// Route to post a new comment for a specific review
+router.post('/review/:id/comments', withAuth, async (req, res) => {
+  try {
+    const newComment = await Comment.create({
+      comment_text: req.body.comment_text,
+      review_id: req.params.id,
+      user_id: req.session.user_id,  // Associate the comment with the logged-in user
+    });
+
+    res.status(200).json(newComment);  // Return the newly created comment
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+
+// route to specific review and get all commetns and their users' names
+router.get("/review/:id", async (req, res) => {
+  try {
+    const review = await Review.findByPk(req.params.id, {
+      include: [{ model: Comment, include: User }]
+    });
+    res.status(200).json(review);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+// Route to get all reviews and render the homepage
+router.get('/homepage', async (req, res) => {
+  try {
+    const reviews = await Review.findAll({
+      include: [{ model: User, attributes: ['name'] }, {model: Comment, include: User}],
+    });
+    res.render('homepage', {
+      reviews: reviews.map(review => review.get({ plain: true })),
+      logged_in: req.session.logged_in
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get login page validation
+router.get("/login", async (req, res) => {
+  try {
+    if (req.session.logged_in) {
+      res.redirect("/homepage");
+      return;
+    }
+    res.render("login");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get signup page 
+router.get("/signup", async (req, res) => {
+  try {
+    if (req.session.logged_in) {
+      res.redirect("/homepage");
+      return;
+    }
+    res.render("signup");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.get("/review", withAuth, async (req, res) => {
+  try {
+    const reviews = await Review.findAll({
+      include: [{ model: User, attributes: ['name'] }],  // Fetch associated user
+    });
 
     res.render("review", {
-      ...review,
-      logged_in: req.session.logged_in
+      reviews: reviews.map(review => review.get({ plain: true })),  // Pass plain objects
+      logged_in: req.session.logged_in,
     });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// Use withAuth middleware to prevent access to route
-router.get("/profile", withAuth, async (req, res) => {
-  try {
-    // Find the logged in user based on the session ID
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ["password"] },
-      include: [{ model: Reviews }]
-    });
 
-    const user = userData.get({ plain: true });
-
-    res.render("profile", {
-      ...user,
-      logged_in: true
-    });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json(err);
-  }
-});
-
-// add auth to /comment
-router.get("/comment", withAuth, async (req, res) => {
-  try {
-    res.render("comment", {
-      logged_in: true
-    });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json(err);
-  }
-});
-
-router.get("/login", (req, res) => {
-  // If the user is already logged in, redirect the request to another route
-  if (req.session.logged_in) {
-    res.redirect("/");
-    return;
-  }
-  res.render("login");
-});
 
 module.exports = router;
