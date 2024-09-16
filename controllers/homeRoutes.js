@@ -50,18 +50,27 @@ router.get('/', async (req, res) => {
 // Route to post a new comment for a specific review
 router.post('/review/:id/comments', withAuth, async (req, res) => {
   try {
+    const { comment_text } = req.body;
+    const { id: review_id } = req.params;
+    const { user_id } = req.session;
+
+    // Validate input
+    if (!comment_text || !review_id || !user_id) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
     const newComment = await Comment.create({
-      comment_text: req.body.comment_text,
-      review_id: req.params.id,
-      user_id: req.session.user_id,  // Associate the comment with the logged-in user
+      comment_text,
+      review_id,
+      user_id,  // Associate the comment with the logged-in user
     });
 
     res.status(200).json(newComment);  // Return the newly created comment
   } catch (err) {
-    res.status(400).json(err);
+    console.error(err);
+    res.status(500).json({ message: 'Failed to post comment.', error: err.message });
   }
 });
-
 
 // route to specific review and get all commetns and their users' names
 router.get("/review/:id", async (req, res) => {
