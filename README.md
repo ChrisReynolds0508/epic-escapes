@@ -5,7 +5,7 @@ Deployed web application URL: https://travel-planner-r3fr.onrender.com/login
 
 ## Description
 
-The TrevaPlanner is the web based application where you can login or register. And in the platform you will see the list of the reviews for desire destination, or you can add a new review or commnet on existing review. 
+Epic Escapes is a web based application where you can login or register. And in the platform you will see the list of the reviews for desire destination, or you can add a new review or commnet on existing review. 
 
 ![Home Page](https://travel-planner-r3fr.onrender.com/login)
 ![Profile](https://travel-planner-r3fr.onrender.com/profile)
