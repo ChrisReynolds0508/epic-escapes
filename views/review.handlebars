@@ -18,7 +18,7 @@
   <div class="review-list">
     {{#each reviews}}
       <div class="review-item bg-white shadow-md rounded-lg p-6 mb-6" data-id="{{this.id}}">
-        <h3 class="text-xl font-semibold mb-2">{{this.city_name}} by {{this.user.name}}</h3>  <!-- Render city name and user name -->
+        <h3 class="text-xl font-semibold mb-2">{{this.city_name}} by {{this.user.name}} <span class="text-red-400">{{format_date date_created}}</span></h3>  <!-- Render city name and user name -->
         <p class="text-gray-700 mb-4">{{this.review}}</p>
         <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 btn-delete" data-id="{{this.id}}">Delete</button>
       </div>
