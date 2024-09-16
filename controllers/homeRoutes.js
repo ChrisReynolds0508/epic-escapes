@@ -47,30 +47,39 @@ router.get('/', async (req, res) => {
 
 
 
-// Route to post a new comment for a specific review
 router.post('/review/:id/comments', withAuth, async (req, res) => {
   try {
     const { comment_text } = req.body;
     const { id: review_id } = req.params;
     const { user_id } = req.session;
 
-    // Validate input
-    if (!comment_text || !review_id || !user_id) {
-      return res.status(400).json({ message: 'All fields are required.' });
+    // Validate input with logging
+    if (!comment_text) {
+      console.log("Missing comment_text");
+      return res.status(400).json({ message: 'Comment text is required.' });
+    }
+    if (!review_id) {
+      console.log("Missing review_id");
+      return res.status(400).json({ message: 'Review ID is required.' });
+    }
+    if (!user_id) {
+      console.log("Missing user_id or not logged in.");
+      return res.status(400).json({ message: 'You must be logged in to comment.' });
     }
 
     const newComment = await Comment.create({
       comment_text,
       review_id,
-      user_id,  // Associate the comment with the logged-in user
+      user_id,
     });
 
-    res.status(200).json(newComment);  // Return the newly created comment
+    res.status(200).json(newComment);
   } catch (err) {
-    console.error(err);
+    console.error("Error while posting comment:", err);
     res.status(500).json({ message: 'Failed to post comment.', error: err.message });
   }
 });
+
 
 // route to specific review and get all commetns and their users' names
 router.get("/review/:id", async (req, res) => {
